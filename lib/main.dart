@@ -252,6 +252,40 @@ class _TopNotificationState extends State<_TopNotification>
 }
 
 // ─────────────────────────────────────────────
+// WIDGET AUXILIAR _Stat (Solución al error de compilación)
+// ─────────────────────────────────────────────
+class _Stat extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _Stat({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(value,
+            style: TextStyle(
+                fontWeight: FontWeight.w900, fontSize: 15, color: color)),
+        const SizedBox(height: 1),
+        Text(label,
+            style: const TextStyle(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w600,
+                color: kTextSub)),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
 // APP ROOT
 // ─────────────────────────────────────────────
 Future<void> main() async {
