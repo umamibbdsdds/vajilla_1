@@ -1382,7 +1382,7 @@ class _ToggleRow extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// PANTALLA: ESTADÍSTICAS (ACTUALIZADA CON CLASE XII INFRAMEN)
+// PANTALLA: ESTADÍSTICAS
 // ─────────────────────────────────────────────
 class EstadisticasPage extends StatefulWidget {
   const EstadisticasPage({super.key});
@@ -1435,7 +1435,6 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
     }
   }
 
-  // Generación de Gráfica de Barras (Basado en la Guía de Clase XII INFRAMEN)[cite: 30]
   List<BarChartGroupData> _generarBarras() {
     return _informe.asMap().entries.map((entry) {
       final index = entry.key;
@@ -1458,7 +1457,6 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
     }).toList();
   }
 
-  // Generación de Gráfica Circular (Basado en la Guía de Clase XII INFRAMEN)[cite: 31, 32]
   List<PieChartSectionData> _generarCircular() {
     double total = _informe.fold(
         0, (s, e) => s + (double.tryParse(e['entregados'].toString()) ?? 0));
@@ -1468,11 +1466,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
       final tipo = item['tipo'] ?? 'Utensilio';
       final val = double.tryParse(item['entregados'].toString()) ?? 0.0;
       final pct = total > 0 ? val / total * 100 : 0.0;
-      final color = item['tipo'] == 'Plato'
-          ? kBlue
-          : item['tipo'] == 'Vaso'
-              ? kAmber
-              : kPrimary;
+      final color = _colorTipo[tipo] ?? kPrimary;
 
       return PieChartSectionData(
         color: color,
@@ -1534,9 +1528,6 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
               ),
             ),
 
-          // ─────────────────────────────────────────────
-          // GRÁFICA CIRCULAR (ESTADÍSTICAS)
-          // ─────────────────────────────────────────────
           Container(
             decoration: BoxDecoration(
               color: kSurface,
@@ -1635,9 +1626,6 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
 
           const SizedBox(height: 24),
 
-          // ─────────────────────────────────────────────
-          // GRÁFICA DE BARRAS (CLASE XII - INFRAMEN)
-          // ─────────────────────────────────────────────
           Container(
             decoration: BoxDecoration(
               color: kSurface,
@@ -1647,7 +1635,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
             ),
             padding: const EdgeInsets.all(22),
             child: Column(children: [
-              const Text('Cantidades Disponibles / Entregadas (Barras)',
+              const Text('Cantidades Entregadas (Barras)',
                   style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
@@ -2785,11 +2773,11 @@ class _InformesPageState extends State<InformesPage> {
 }
 
 // ─────────────────────────────────────────────
-// PANTALLA: ESCANEO (MOBILE SCANNER CORREGIDO)
+// PANTALLA: ESCANEO
 // ─────────────────────────────────────────────
 class EscaneoPage extends StatefulWidget {
   final ValueChanged<String> onCodigoEscaneado;
-  const EscaneoPage({super.key, required this.onCodigoEscaneado});
+  const EscaneoPage({super, required this.onCodigoEscaneado});
 
   @override
   State<EscaneoPage> createState() => _EscaneoPageState();
