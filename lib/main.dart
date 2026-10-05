@@ -12,7 +12,7 @@ import 'package:excel/excel.dart' as excel_pkg;
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 
-const String kBaseUrl = 'http://10.198.197.181:3000';
+const String kBaseUrl = 'https://cocinaescolar-production.up.railway.app';
 
 // ─────────────────────────────────────────────
 // PALETA DE DISEÑO PREMIUM Y MODERNA
