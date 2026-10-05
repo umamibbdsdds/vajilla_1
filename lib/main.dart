@@ -771,7 +771,7 @@ class _InventarioModuloPageState extends State<InventarioModuloPage> {
 }
 
 // ─────────────────────────────────────────────
-// PANTALLA: CRUD INVENTARIO (MEJORADA)
+// PANTALLA: CRUD INVENTARIO
 // ─────────────────────────────────────────────
 class InventarioCrudPage extends StatefulWidget {
   const InventarioCrudPage({super.key});
@@ -1423,7 +1423,7 @@ class _ToggleRow extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// PANTALLA: ESTADÍSTICAS (MEJORADA)
+// PANTALLA: ESTADÍSTICAS (DISEÑO PROFESIONAL RENOVADO)
 // ─────────────────────────────────────────────
 class EstadisticasPage extends StatefulWidget {
   const EstadisticasPage({super.key});
@@ -1504,8 +1504,13 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
           BarChartRodData(
             toY: entregados,
             color: color,
-            width: 20,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+            width: 22,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+            backDrawRodData: BackgroundBarChartRodData(
+              show: true,
+              toY: 50,
+              color: kBackground,
+            ),
           ),
         ],
       );
@@ -1527,7 +1532,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
         color: color,
         value: val,
         title: '${pct.toStringAsFixed(0)}%',
-        radius: isTouched ? 74.0 : 62.0,
+        radius: isTouched ? 76.0 : 64.0,
         titleStyle: TextStyle(
           fontSize: isTouched ? 16 : 13,
           fontWeight: FontWeight.w800,
@@ -1563,7 +1568,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
               child: Container(
                 margin: const EdgeInsets.only(bottom: 18),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 9),
+                    horizontal: 16, vertical: 10),
                 decoration: BoxDecoration(
                   color: kSurface,
                   borderRadius: BorderRadius.circular(20),
@@ -1572,17 +1577,18 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
                 ),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   const Icon(Icons.calendar_today_rounded,
-                      size: 14, color: kPrimary),
+                      size: 15, color: kPrimary),
                   const SizedBox(width: 8),
-                  Text('Hoy: $_fechaHoy',
+                  Text('Fecha: $_fechaHoy',
                       style: const TextStyle(
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                           color: kTextMain,
-                          fontSize: 13)),
+                          fontSize: 13.5)),
                 ]),
               ),
             ),
 
+          // Gráfico Circular
           Container(
             decoration: BoxDecoration(
               color: kSurface,
@@ -1592,10 +1598,10 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
             ),
             padding: const EdgeInsets.all(22),
             child: Column(children: [
-              const Text('Distribución de Vajilla Entregada (Circular)',
+              const Text('Distribución de Vajilla Entregada',
                   style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
                       color: kTextMain,
                       letterSpacing: -0.2)),
               const SizedBox(height: 22),
@@ -1635,8 +1641,8 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
                                 },
                               ),
                               borderData: FlBorderData(show: false),
-                              sectionsSpace: 3,
-                              centerSpaceRadius: 62,
+                              sectionsSpace: 4,
+                              centerSpaceRadius: 65,
                               sections: _generarCircular(),
                             )),
                             Center(
@@ -1645,26 +1651,26 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
                                 children: [
                                   Text('$_totalEntregados',
                                       style: const TextStyle(
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.w800,
+                                          fontSize: 32,
+                                          fontWeight: FontWeight.w900,
                                           color: kTextMain)),
                                   const Text('Total',
                                       style: TextStyle(
                                           fontSize: 12,
                                           color: kTextSub,
-                                          fontWeight: FontWeight.w500)),
+                                          fontWeight: FontWeight.w600)),
                                 ],
                               ),
                             ),
                           ]),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 20),
               Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
                   color: kBackground,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: kBorder),
                 ),
                 child: const Row(
@@ -1681,6 +1687,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
 
           const SizedBox(height: 24),
 
+          // Gráfico de Barras
           Container(
             decoration: BoxDecoration(
               color: kSurface,
@@ -1690,10 +1697,10 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
             ),
             padding: const EdgeInsets.all(22),
             child: Column(children: [
-              const Text('Cantidades Entregadas (Barras)',
+              const Text('Comparativa por Tipo',
                   style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
                       color: kTextMain,
                       letterSpacing: -0.2)),
               const SizedBox(height: 22),
@@ -1719,7 +1726,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
                                         String tipo = _informe[idx]['tipo'] ?? '';
                                         return Padding(
                                           padding: const EdgeInsets.only(top: 8.0),
-                                          child: Text(tipo, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                                          child: Text(tipo, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: kTextSub)),
                                         );
                                       }
                                       return const Text('');
@@ -1734,8 +1741,8 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
             ]),
           ),
 
-          const SizedBox(height: 24),
-          _sectionTitle('Detalle por Utensilio'),
+          const SizedBox(height: 28),
+          _sectionTitle('Detalle Profesional por Utensilio'),
 
           if (_cargando)
             const Center(child: CircularProgressIndicator(color: kPrimary))
@@ -1756,7 +1763,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _informe.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, __) => const SizedBox(height: 14),
               itemBuilder: (_, i) {
                 final item = _informe[i];
                 final tipo = item['tipo'] ?? 'Utensilio';
@@ -1771,60 +1778,93 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
                   orElse: () => null,
                 );
                 final cantidadInicial = invItem != null ? (int.tryParse(invItem['cantidad'].toString()) ?? 0) : 0;
-                final ocupados = pendientes; // Los utensilios prestados no devueltos representan los ocupados
+                final ocupados = pendientes;
 
                 return Container(
                   decoration: BoxDecoration(
                     color: kSurface,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: kBorder),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(color: kBorder, width: 1.2),
                     boxShadow: kShadowSoft,
                   ),
-                  padding: const EdgeInsets.all(18),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Cabecera del Utensilio
                       Row(children: [
                         Container(
-                          width: 44,
-                          height: 44,
+                          width: 48,
+                          height: 48,
                           decoration: BoxDecoration(
                             color: col.withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          child: Icon(_iconoTipo[tipo] ?? Icons.analytics, color: col, size: 24),
+                          child: Icon(_iconoTipo[tipo] ?? Icons.analytics, color: col, size: 26),
                         ),
                         const SizedBox(width: 14),
                         Expanded(
-                          child: Text(tipo,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 16,
-                                  color: kTextMain)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(tipo,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 17,
+                                      color: kTextMain)),
+                              const SizedBox(height: 2),
+                              const Text('Estado de inventario y flujo diario',
+                                  style: TextStyle(fontSize: 12, color: kTextSub)),
+                            ],
+                          ),
                         ),
                       ]),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 16),
                       const Divider(color: kBorder, height: 1),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 16),
                       
-                      // Bloque 1: Inicial u Ocupados
+                      // Grid / Fila de Métricas Principales (Diseño Tarjeta Estilizada)
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _StatBox(label: 'Cantidad Inicial (Hay)', value: '$cantidadInicial', color: kPrimaryDeep),
-                          _StatBox(label: 'Ocupados', value: '$ocupados', color: kAmber),
+                          Expanded(
+                            child: _StatCardPro(
+                              label: 'Stock Inicial', 
+                              value: '$cantidadInicial', 
+                              color: kPrimaryDeep,
+                              icon: Icons.inventory_2_outlined,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _StatCardPro(
+                              label: 'En Préstamo', 
+                              value: '$ocupados', 
+                              color: kAmber,
+                              icon: Icons.hourglass_top_rounded,
+                            ),
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       
-                      // Bloque 2: Entregados, Devueltos, Pendientes
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _Stat(label: 'Entregados', value: '$entregados', color: kBlue),
-                          _Stat(label: 'Devueltos', value: '$devueltos', color: kGreen),
-                          _Stat(label: 'Pendientes', value: '$pendientes', color: kPrimary),
-                        ],
+                      // Desglose Secundario de Actividad (Entregados / Devueltos / Pendientes)
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: kBackground,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: kBorder),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _StatBadgeDetail(label: 'Entregados', value: '$entregados', color: kBlue),
+                            Container(height: 24, width: 1, color: kBorder),
+                            _StatBadgeDetail(label: 'Devueltos', value: '$devueltos', color: kGreen),
+                            Container(height: 24, width: 1, color: kBorder),
+                            _StatBadgeDetail(label: 'Pendientes', value: '$pendientes', color: kPrimary),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -1837,47 +1877,71 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
   }
 }
 
-class _StatBox extends StatelessWidget {
+// Tarjeta profesional de métricas principales para los utensilios
+class _StatCardPro extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  const _StatBox({required this.label, required this.value, required this.color});
+  final IconData icon;
+
+  const _StatCardPro({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.2)),
+        color: color.withOpacity(0.06),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withOpacity(0.18), width: 1.2),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Text(value, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: color)),
-          Text(label, style: const TextStyle(fontSize: 11, color: kTextSub, fontWeight: FontWeight.w600)),
+          Icon(icon, color: color, size: 22),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(value, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: color)),
+                const SizedBox(height: 2),
+                Text(label, style: const TextStyle(fontSize: 11.5, color: kTextSub, fontWeight: FontWeight.w700)),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class _Stat extends StatelessWidget {
+// Insignia de detalle secundario para movimientos
+class _StatBadgeDetail extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  const _Stat({required this.label, required this.value, required this.color});
+
+  const _StatBadgeDetail({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(value,
             style: TextStyle(
-                fontWeight: FontWeight.w800, fontSize: 15, color: color)),
-        Text(label, style: const TextStyle(fontSize: 10.5, color: kTextSub)),
+                fontWeight: FontWeight.w900, fontSize: 16, color: color)),
+        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: kTextSub)),
       ],
     );
   }
