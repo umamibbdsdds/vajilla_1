@@ -2773,19 +2773,21 @@ class _InformesPageState extends State<InformesPage> {
 }
 
 // ─────────────────────────────────────────────
-// PANTALLA: ESCANEO
+// PANTALLA: ESCANEO DE CÓDIGOS DE BARRAS
 // ─────────────────────────────────────────────
 class EscaneoPage extends StatefulWidget {
   final ValueChanged<String> onCodigoEscaneado;
-  const EscaneoPage({super, required this.onCodigoEscaneado});
+  const EscaneoPage({super.key, required this.onCodigoEscaneado});
 
   @override
   State<EscaneoPage> createState() => _EscaneoPageState();
 }
 
-class _EscaneoPageState extends State<EscaneoPage> {
+class _EscaneoPageState extends State<EscaneoPage>
+    with SingleTickerProviderStateMixin {
   bool _encontrado = false;
   late MobileScannerController cameraController;
+  late AnimationController _animationController;
 
   @override
   void initState() {
@@ -2795,6 +2797,11 @@ class _EscaneoPageState extends State<EscaneoPage> {
       facing: CameraFacing.back,
       torchEnabled: false,
     );
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
   }
 
   @override
@@ -2808,6 +2815,7 @@ class _EscaneoPageState extends State<EscaneoPage> {
 
   @override
   void dispose() {
+    _animationController.dispose();
     cameraController.dispose();
     super.dispose();
   }
@@ -2815,7 +2823,7 @@ class _EscaneoPageState extends State<EscaneoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar('Escanear Código de Barras / QR'),
+      appBar: _buildAppBar('Escanear Código de Barras'),
       body: Stack(
         children: [
           MobileScanner(
@@ -2834,13 +2842,59 @@ class _EscaneoPageState extends State<EscaneoPage> {
             },
           ),
           Center(
-            child: Container(
-              width: 260,
-              height: 260,
-              decoration: BoxDecoration(
-                border: Border.all(color: kPrimary, width: 3),
-                borderRadius: BorderRadius.circular(20),
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 320,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.1),
+                    border: Border.all(color: kPrimary, width: 2.5),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) {
+                      return Stack(
+                        children: [
+                          Positioned(
+                            top: _animationController.value * 130 + 8,
+                            left: 12,
+                            right: 12,
+                            child: Container(
+                              height: 2,
+                              decoration: BoxDecoration(
+                                color: kPrimary,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: kPrimary.withOpacity(0.8),
+                                    blurRadius: 6,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black70,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'Alinea el código de barras dentro del rectángulo',
+                    style: TextStyle(color: Colors.white, fontSize: 12.5),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
