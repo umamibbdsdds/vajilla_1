@@ -771,7 +771,7 @@ class _InventarioModuloPageState extends State<InventarioModuloPage> {
 }
 
 // ─────────────────────────────────────────────
-// PANTALLA: CRUD INVENTARIO
+// PANTALLA: CRUD INVENTARIO (MEJORADA)
 // ─────────────────────────────────────────────
 class InventarioCrudPage extends StatefulWidget {
   const InventarioCrudPage({super.key});
@@ -785,6 +785,18 @@ class _InventarioCrudPageState extends State<InventarioCrudPage> {
   final tipoController = TextEditingController();
   final cantidadController = TextEditingController();
   bool _cargando = false;
+
+  static const _iconoTipo = {
+    'Plato': Icons.dinner_dining,
+    'Vaso': Icons.local_drink_rounded,
+    'Taza': Icons.coffee_rounded,
+  };
+
+  static const _colorTipo = {
+    'Plato': kBlue,
+    'Vaso': kAmber,
+    'Taza': kPrimary,
+  };
 
   @override
   void initState() {
@@ -876,7 +888,7 @@ class _InventarioCrudPageState extends State<InventarioCrudPage> {
             const SizedBox(height: 12),
             TextField(
               controller: editCantidadController,
-              decoration: const InputDecoration(labelText: 'Cantidad'),
+              decoration: const InputDecoration(labelText: 'Cantidad Inicial / Stock'),
               keyboardType: TextInputType.number,
             ),
           ],
@@ -936,46 +948,64 @@ class _InventarioCrudPageState extends State<InventarioCrudPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar('Inventario - Gestión'),
+      appBar: _buildAppBar(
+        'Gestión de Inventario',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: obtenerInventario,
+            tooltip: 'Refrescar Inventario',
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: kSurface,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(22),
                 border: Border.all(color: kBorder),
                 boxShadow: kShadowSoft,
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Text('Nuevo Utensilio', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: kTextMain)),
+                  const SizedBox(height: 14),
                   TextField(
                     controller: tipoController,
-                    decoration: const InputDecoration(labelText: 'Tipo de utensilio (Ej: Plato, Vaso)'),
+                    decoration: const InputDecoration(
+                      labelText: 'Tipo de utensilio (Ej: Plato, Vaso, Taza)',
+                      prefixIcon: Icon(Icons.kitchen_rounded),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     controller: cantidadController,
-                    decoration: const InputDecoration(labelText: 'Cantidad'),
+                    decoration: const InputDecoration(
+                      labelText: 'Cantidad Inicial / Stock',
+                      prefixIcon: Icon(Icons.pin_rounded),
+                    ),
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
-                    height: 48,
+                    height: 50,
                     child: ElevatedButton.icon(
                       onPressed: agregarUtensilio,
-                      icon: const Icon(Icons.add_rounded),
-                      label: const Text('Agregar Utensilio'),
+                      icon: const Icon(Icons.add_circle_outline_rounded),
+                      label: const Text('Agregar a Inventario'),
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
-            _sectionTitle('Lista Actual en Inventario'),
+            _sectionTitle('Lista Inicial en Inventario'),
             Expanded(
               child: _cargando
                   ? const Center(child: CircularProgressIndicator(color: kPrimary))
@@ -989,28 +1019,39 @@ class _InventarioCrudPageState extends State<InventarioCrudPage> {
                             final id = item['id'] ?? index + 1;
                             final tipo = item['tipo'] ?? 'Utensilio';
                             final cantidad = int.tryParse((item['cantidad'] ?? 0).toString()) ?? 0;
+                            final colorItem = _colorTipo[tipo] ?? kPrimary;
+                            final iconoItem = _iconoTipo[tipo] ?? Icons.kitchen;
 
                             return Container(
                               decoration: BoxDecoration(
                                 color: kSurface,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(18),
                                 border: Border.all(color: kBorder),
                                 boxShadow: kShadowSoft,
                               ),
                               child: ListTile(
-                                leading: const Icon(Icons.kitchen, color: kPrimary),
-                                title: Text("Utensilio: $tipo", style: const TextStyle(fontWeight: FontWeight.w700)),
-                                subtitle: Text("Cantidad disponible: $cantidad"),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                leading: Container(
+                                  width: 46,
+                                  height: 46,
+                                  decoration: BoxDecoration(
+                                    color: colorItem.withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Icon(iconoItem, color: colorItem, size: 24),
+                                ),
+                                title: Text(tipo, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: kTextMain)),
+                                subtitle: Text("Cantidad inicial disponible: $cantidad", style: const TextStyle(fontSize: 12.5, color: kTextSub)),
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(
-                                      icon: const Icon(Icons.edit, color: kBlue),
+                                      icon: const Icon(Icons.edit_rounded, color: kBlue),
                                       onPressed: () => editarUtensilio(id, tipo, cantidad),
                                       tooltip: 'Editar',
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.red),
+                                      icon: const Icon(Icons.delete_outline_rounded, color: Colors.red),
                                       onPressed: () => eliminarUtensilio(id),
                                       tooltip: 'Eliminar',
                                     ),
@@ -1382,7 +1423,7 @@ class _ToggleRow extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// PANTALLA: ESTADÍSTICAS
+// PANTALLA: ESTADÍSTICAS (MEJORADA)
 // ─────────────────────────────────────────────
 class EstadisticasPage extends StatefulWidget {
   const EstadisticasPage({super.key});
@@ -1393,6 +1434,7 @@ class EstadisticasPage extends StatefulWidget {
 class _EstadisticasPageState extends State<EstadisticasPage> {
   bool _cargando = false;
   List<dynamic> _informe = [];
+  List<dynamic> _inventario = [];
   String _fechaHoy = '';
   int _touchedIndex = -1;
 
@@ -1417,19 +1459,32 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
   Future<void> _obtenerEstadisticasHoy() async {
     setState(() => _cargando = true);
     try {
-      final response = await http.get(Uri.parse('$kBaseUrl/informe'));
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          _informe = data is List ? data : (data['informe'] ?? []);
-          _fechaHoy = data['fecha'] ??
-              DateTime.now().toString().split(' ')[0];
-        });
-      } else {
-        setState(() => _informe = []);
+      final responseInforme = await http.get(Uri.parse('$kBaseUrl/informe'));
+      final responseInventario = await http.get(Uri.parse('$kBaseUrl/utensilios'));
+
+      List<dynamic> tempInforme = [];
+      List<dynamic> tempInventario = [];
+
+      if (responseInforme.statusCode == 200) {
+        final data = jsonDecode(responseInforme.body);
+        tempInforme = data is List ? data : (data['informe'] ?? []);
+        _fechaHoy = data['fecha'] ?? DateTime.now().toString().split(' ')[0];
       }
+
+      if (responseInventario.statusCode == 200) {
+        final dataInv = jsonDecode(responseInventario.body);
+        tempInventario = dataInv is List ? dataInv : [];
+      }
+
+      setState(() {
+        _informe = tempInforme;
+        _inventario = tempInventario;
+      });
     } catch (_) {
-      setState(() => _informe = []);
+      setState(() {
+        _informe = [];
+        _inventario = [];
+      });
     } finally {
       if (mounted) setState(() => _cargando = false);
     }
@@ -1449,7 +1504,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
           BarChartRodData(
             toY: entregados,
             color: color,
-            width: 18,
+            width: 20,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
           ),
         ],
@@ -1701,7 +1756,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _informe.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (_, i) {
                 final item = _informe[i];
                 final tipo = item['tipo'] ?? 'Utensilio';
@@ -1710,60 +1765,99 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
                 final pendientes = item['pendientes'] ?? 0;
                 final col = _colorTipo[tipo] ?? kBlue;
 
+                // Extraer el total inicial del inventario
+                final invItem = _inventario.firstWhere(
+                  (inv) => (inv['tipo'] ?? '').toString().toLowerCase() == tipo.toString().toLowerCase(),
+                  orElse: () => null,
+                );
+                final cantidadInicial = invItem != null ? (int.tryParse(invItem['cantidad'].toString()) ?? 0) : 0;
+                final ocupados = pendientes; // Los utensilios prestados no devueltos representan los ocupados
+
                 return Container(
                   decoration: BoxDecoration(
                     color: kSurface,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: kBorder),
                     boxShadow: kShadowSoft,
                   ),
                   padding: const EdgeInsets.all(18),
-                  child: Row(children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: col.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(_iconoTipo[tipo] ?? Icons.analytics,
-                          color: col, size: 24),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(tipo,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: col.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Icon(_iconoTipo[tipo] ?? Icons.analytics, color: col, size: 24),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Text(tipo,
                               style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 16,
                                   color: kTextMain)),
-                          const SizedBox(height: 6),
-                          Row(children: [
-                            _Stat(
-                                label: 'Entregados',
-                                value: '$entregados',
-                                color: kBlue),
-                            const SizedBox(width: 14),
-                            _Stat(
-                                label: 'Devueltos',
-                                value: '$devueltos',
-                                color: kGreen),
-                            const SizedBox(width: 14),
-                            _Stat(
-                                label: 'Pendientes',
-                                value: '$pendientes',
-                                color: kPrimary),
-                          ]),
+                        ),
+                      ]),
+                      const SizedBox(height: 14),
+                      const Divider(color: kBorder, height: 1),
+                      const SizedBox(height: 14),
+                      
+                      // Bloque 1: Inicial u Ocupados
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _StatBox(label: 'Cantidad Inicial (Hay)', value: '$cantidadInicial', color: kPrimaryDeep),
+                          _StatBox(label: 'Ocupados', value: '$ocupados', color: kAmber),
                         ],
                       ),
-                    ),
-                  ]),
+                      const SizedBox(height: 10),
+                      
+                      // Bloque 2: Entregados, Devueltos, Pendientes
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _Stat(label: 'Entregados', value: '$entregados', color: kBlue),
+                          _Stat(label: 'Devueltos', value: '$devueltos', color: kGreen),
+                          _Stat(label: 'Pendientes', value: '$pendientes', color: kPrimary),
+                        ],
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
         ]),
+      ),
+    );
+  }
+}
+
+class _StatBox extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+  const _StatBox({required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(value, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: color)),
+          Text(label, style: const TextStyle(fontSize: 11, color: kTextSub, fontWeight: FontWeight.w600)),
+        ],
       ),
     );
   }
