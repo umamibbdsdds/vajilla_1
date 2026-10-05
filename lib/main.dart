@@ -37,11 +37,6 @@ const kShadowSoft = [
   BoxShadow(color: Color(0x08000000), blurRadius: 2,  offset: Offset(0, 1)),
 ];
 
-const kShadowMedium = [
-  BoxShadow(color: Color(0x18000000), blurRadius: 24, offset: Offset(0, 8)),
-  BoxShadow(color: Color(0x0A000000), blurRadius: 4,  offset: Offset(0, 2)),
-];
-
 // ─────────────────────────────────────────────
 // NOTIFICACIONES
 // ─────────────────────────────────────────────
@@ -334,14 +329,6 @@ class CocinaEscolarApp extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14)),
             textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
           ),
-        ),
-        switchTheme: SwitchThemeData(
-          thumbColor: WidgetStateProperty.resolveWith(
-              (s) => s.contains(WidgetState.selected) ? kGreen : Colors.white),
-          trackColor: WidgetStateProperty.resolveWith(
-              (s) => s.contains(WidgetState.selected)
-                  ? kGreen.withOpacity(0.35)
-                  : const Color(0xFFCBD5E1)),
         ),
       ),
       home: const HomePage(),
@@ -1448,7 +1435,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
     }
   }
 
-  // Generación de Gráfica de Barras (Basado en la Guía de Clase XII INFRAMEN)[cite: 24]
+  // Generación de Gráfica de Barras (Basado en la Guía de Clase XII INFRAMEN)[cite: 30]
   List<BarChartGroupData> _generarBarras() {
     return _informe.asMap().entries.map((entry) {
       final index = entry.key;
@@ -1471,7 +1458,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
     }).toList();
   }
 
-  // Generación de Gráfica Circular (Basado en la Guía de Clase XII INFRAMEN)[cite: 24, 25]
+  // Generación de Gráfica Circular (Basado en la Guía de Clase XII INFRAMEN)[cite: 31, 32]
   List<PieChartSectionData> _generarCircular() {
     double total = _informe.fold(
         0, (s, e) => s + (double.tryParse(e['entregados'].toString()) ?? 0));
@@ -1649,7 +1636,7 @@ class _EstadisticasPageState extends State<EstadisticasPage> {
           const SizedBox(height: 24),
 
           // ─────────────────────────────────────────────
-          // GRÁFICA DE BARRAS (CLASE XII - INFRAMEN)[cite: 23, 24]
+          // GRÁFICA DE BARRAS (CLASE XII - INFRAMEN)
           // ─────────────────────────────────────────────
           Container(
             decoration: BoxDecoration(
@@ -2798,7 +2785,7 @@ class _InformesPageState extends State<InformesPage> {
 }
 
 // ─────────────────────────────────────────────
-// PANTALLA: ESCANEO (MOBILE SCANNER)
+// PANTALLA: ESCANEO (MOBILE SCANNER CORREGIDO)
 // ─────────────────────────────────────────────
 class EscaneoPage extends StatefulWidget {
   final ValueChanged<String> onCodigoEscaneado;
@@ -2815,7 +2802,20 @@ class _EscaneoPageState extends State<EscaneoPage> {
   @override
   void initState() {
     super.initState();
-    cameraController = MobileScannerController();
+    cameraController = MobileScannerController(
+      detectionSpeed: DetectionSpeed.noDuplicates,
+      facing: CameraFacing.back,
+      torchEnabled: false,
+    );
+  }
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      cameraController.stop();
+    }
+    cameraController.start();
   }
 
   @override
@@ -2828,20 +2828,34 @@ class _EscaneoPageState extends State<EscaneoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar('Escanear Código de Barras / QR'),
-      body: MobileScanner(
-        controller: cameraController,
-        onDetect: (capture) {
-          if (_encontrado) return;
-          final List<Barcode> barcodes = capture.barcodes;
-          for (final barcode in barcodes) {
-            if (barcode.rawValue != null) {
-              _encontrado = true;
-              widget.onCodigoEscaneado(barcode.rawValue!);
-              Navigator.pop(context);
-              break;
-            }
-          }
-        },
+      body: Stack(
+        children: [
+          MobileScanner(
+            controller: cameraController,
+            onDetect: (capture) {
+              if (_encontrado) return;
+              final List<Barcode> barcodes = capture.barcodes;
+              for (final barcode in barcodes) {
+                if (barcode.rawValue != null) {
+                  _encontrado = true;
+                  widget.onCodigoEscaneado(barcode.rawValue!);
+                  Navigator.pop(context);
+                  break;
+                }
+              }
+            },
+          ),
+          Center(
+            child: Container(
+              width: 260,
+              height: 260,
+              decoration: BoxDecoration(
+                border: Border.all(color: kPrimary, width: 3),
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
